@@ -1,0 +1,12 @@
+﻿{
+  "disabled": false,
+  "bindings": [
+    {
+      "name": "myQueueItem",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "myqueue-items",
+      "connection": "DefaultEndpointsProtocol=https;AccountName=nswstorage1;AccountKey=7hGnDIPUL+Ahz5hCxzQkBkjVQ9t7jAGAmRjNc7XGrHnTv5xQ+4/Fxoui4W5EPYUhrFhqy9IfXKL5HtIPmG+1Sg=="
+    }
+  ]
+}
