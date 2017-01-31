@@ -15,35 +15,42 @@ public static void Run(string myQueueItem, TraceWriter log)
 
     while (true)
     {
-        String currentTime = DateTime.UtcNow.ToString();
-        Random r = new Random();
-        int scoreLabel = r.Next(0, 100);
+        try
+        {
+            // Get Datetime and Value for Power BI Stream Dataset
+            String currentTime = DateTime.UtcNow.ToString();
+            Random r = new Random();
+            int scoreLabel = r.Next(0, 100);
 
-        log.Info($"scoreLabel = {scoreLabel}");
+            log.Info($"scoreLabel = {scoreLabel}");
 
-        WebRequest request = WebRequest.Create(realTimePushURL);
-        request.Method = "POST";
-        string postData = String.Format("[{{ \"currentTime\": \"{0}\", \"scoreLabel\":{1} }}]", currentTime, scoreLabel);
+            WebRequest request = WebRequest.Create(realTimePushURL);
+            request.Method = "POST";
+            string postData = String.Format("[{{ \"currentTime\": \"{0}\", \"scoreLabel\":{1} }}]", currentTime, scoreLabel);
 
-        // sending request to Power BI streaming API
-        byte[] byteArray = Encoding.UTF8.GetBytes(postData);
-        request.ContentLength = byteArray.Length;
-        Stream dataStream = request.GetRequestStream();
-        dataStream.Write(byteArray, 0, byteArray.Length);
-        dataStream.Close();
-        WebResponse response = request.GetResponse();
+            // sending request to Power BI streaming API
+            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+            request.ContentLength = byteArray.Length;
+            Stream dataStream = request.GetRequestStream();
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            dataStream.Close();
+            WebResponse response = request.GetResponse();
 
-        // Get the stream containing content returned by the server.
-        dataStream = response.GetResponseStream();
-        StreamReader reader = new StreamReader(dataStream);
-        string responseFromServer = reader.ReadToEnd();
+            // Get the stream containing content returned by the server.
+            dataStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(dataStream);
+            string responseFromServer = reader.ReadToEnd();
 
-        // Clean up the streams
-        reader.Close();
-        dataStream.Close();
-        response.Close();
+            // Clean up the streams
+            reader.Close();
+            dataStream.Close();
+            response.Close();
 
-        // Wait 1 second 
-        System.Threading.Thread.Sleep(1000);
+            // Wait 1 second 
+            System.Threading.Thread.Sleep(1000);
+        } catch (Exception e)
+        {
+            log.Info($"Error = {e.Message}");
+        }
     }
 }
